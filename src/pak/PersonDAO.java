@@ -2,19 +2,31 @@ package pak;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class PersonDAO {
 
+	private Connection con = null;
+	
+	public void connect() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/samuraj?useSSL=true", "root", "andrija");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public Person getPerson(int id) {
 		Person p = new Person();
 		p.setId(id);
 		try {
 			String query = "select * from podaci where id = " + id;
 			
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/samuraj?useSSL=true", "root", "andrija");
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery(query);
 			rs.next();
@@ -25,5 +37,19 @@ public class PersonDAO {
 			e.printStackTrace();
 		}
 		return p;
+	}
+	
+	public void addPerson(int id, String name, String surname) {
+		String query = "insert into podaci values (?, ?, ?)";
+		
+		try {
+			PreparedStatement pst = con.prepareStatement(query);
+			pst.setInt(1, id);
+			pst.setString(2, name);
+			pst.setString(3, surname);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
