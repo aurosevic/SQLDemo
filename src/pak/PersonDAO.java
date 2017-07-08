@@ -41,6 +41,8 @@ public class PersonDAO {
 	
 	public void addPerson(int id, String name, String surname) {
 		String query = "insert into podaci values (?, ?, ?)";
+		//	Change data from specific row:
+		//	"update podaci set ime = 'Anica', prezime = 'Dobra' where id = 10"
 		
 		try {
 			PreparedStatement pst = con.prepareStatement(query);
